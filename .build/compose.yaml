@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_llama_ding_dong
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      OLLAMA_API_COMPAT: "1"
+      OLLAMA_USE_MMAP: "1"
+    volumes:
+      - "C:\\.docker\\ollama_data:/root/.ollama"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - ollama_chat_client_network
+
+networks:
+  ollama_chat_client_network:
+    name: ollama_chat_client_network
+    driver: bridge
