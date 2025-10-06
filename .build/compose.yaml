@@ -6,23 +6,23 @@ services:
     container_name: ollama_llama_ding_dong
     restart: unless-stopped
     ports:
-      - "11434:11434"
+      - "${OLLAMA_PORT}:11434"
     environment:
       OLLAMA_API_COMPAT: "1"
       OLLAMA_USE_MMAP: "1"
     volumes:
-      - "C:\\.docker\\ollama_data:/root/.ollama"
+      - "${OLLAMA_DATA_PATH}:/root/.ollama"
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: all
+              count: ${USE_GPU_COUNT:-0}
               capabilities: [gpu]
     networks:
       - ollama_chat_client_network
 
 networks:
   ollama_chat_client_network:
-    name: ollama_chat_client_network
+    name: ${COMPOSE_PROJECT_NAME}_network
     driver: bridge

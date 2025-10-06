@@ -1,14 +1,16 @@
-﻿namespace OllamaChatClient.Console.UI;
+﻿using OllamaChatClient.Console.Services;
+
+namespace OllamaChatClient.Console.UI;
 using Console = System.Console;
 
 public class ChatWindow
 {
-    // private readonly IOllamaService _ollama;
-    //
-    // public ChatInterface(IOllamaService ollama)
-    // {
-    //     _ollama = ollama;
-    // }
+    private readonly IOllamaClient _ollama;
+    
+    public ChatWindow(IOllamaClient ollama)
+    {
+        _ollama = ollama;
+    }
 
     public async Task StartChatAsync(string model)
     {
@@ -43,13 +45,16 @@ public class ChatWindow
             try
             {
                 // Stream the response chunk by chunk
-                // await foreach (var chunk in _ollama.StreamMessageAsync(model, input!))
-                // {
-                //     Console.ForegroundColor = ConsoleColor.Cyan;
-                //     Console.Write(chunk);
-                //     Console.ResetColor();
-                // }
-                Console.Write("Testing chat client");
+                await foreach (var (chunk, isThinking) in _ollama.StreamMessageAsync(model, input!))
+                {
+                    if (!isThinking)
+                        Console.ForegroundColor = ConsoleColor.White; // final response
+                    else
+                        Console.ForegroundColor = ConsoleColor.DarkGray; // thinking
+
+                    Console.Write(chunk);
+                    Console.ResetColor();
+                } 
 
                 Console.WriteLine("\n"); // spacing after message
             }
@@ -71,7 +76,7 @@ public class ChatWindow
     
     private void ClearAndDrawHeader(string model)
     {
-        Console.Clear();
+        Console.Write("\x1b[3J\x1b[H\x1b[2J");
 
         // Header
         Console.ForegroundColor = ConsoleColor.White;

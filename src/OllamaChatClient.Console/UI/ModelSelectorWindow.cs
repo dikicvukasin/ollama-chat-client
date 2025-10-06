@@ -1,32 +1,26 @@
 ﻿using OllamaChatClient.Console.Models;
+using OllamaChatClient.Console.Services;
 
 namespace OllamaChatClient.Console.UI;
 using Console = System.Console;
 
 public class ModelSelectorWindow
 {
-    // private readonly IOllamaService _ollama;
-    // private readonly ChatInterface _chatInterface;
-    //
-    // public ModelSelector(IOllamaService ollama, ChatInterface chatInterface)
-    // {
-    //     _ollama = ollama;
-    //     _chatInterface = chatInterface;
-    // }
-
-    private readonly List<OllamaModel> _models = new()
+    private readonly IOllamaClient _ollama;
+    private readonly ChatWindow _chatWindow;
+    
+    public ModelSelectorWindow(IOllamaClient ollama, ChatWindow chatWindow)
     {
-        new OllamaModel { Name = "Model 1" },
-        new OllamaModel { Name = "Model 2" },
-        new OllamaModel { Name = "Model 3" },
-    };
+        _ollama = ollama;
+        _chatWindow = chatWindow;
+    }
 
     public async Task RunAsync()
     {
         while (true)
         {
             Console.CursorVisible = false;
-            Console.Clear();
+            Console.Write("\x1b[3J\x1b[H\x1b[2J");
 
             // App name in white
             Console.ForegroundColor = ConsoleColor.White;
@@ -39,7 +33,7 @@ public class ModelSelectorWindow
             Console.ResetColor();
 
             //var models = await _ollama.GetModelsAsync();
-            var models = _models;
+            var models = await _ollama.GetModelsAsync();
             if (models.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -58,7 +52,7 @@ public class ModelSelectorWindow
             
             do
             {
-                Console.Clear();
+                Console.Write("\x1b[3J\x1b[H\x1b[2J");
 
                 // App name and header
                 Console.ForegroundColor = ConsoleColor.White;
@@ -109,7 +103,7 @@ public class ModelSelectorWindow
             if (selected.Equals("Exit", StringComparison.OrdinalIgnoreCase))
                 break;
 
-            await new ChatWindow().StartChatAsync(selected);
+            await _chatWindow.StartChatAsync(selected);
         }
     }
 }

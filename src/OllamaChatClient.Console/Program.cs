@@ -2,15 +2,21 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OllamaChatClient.Console.Services;
 using OllamaChatClient.Console.UI;
 
 using var host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+    })
     .ConfigureServices((_, services) =>
     {
-        // services.AddHttpClient<IOllamaService, OllamaService>(client =>
-        // {
-        //     client.BaseAddress = new Uri("http://localhost:11434/api/");
-        // });
+        services.AddHttpClient<IOllamaClient, OllamaClient>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:11435/api/");
+        });
         services.AddSingleton<ModelSelectorWindow>();
         services.AddSingleton<ChatWindow>();
     })
