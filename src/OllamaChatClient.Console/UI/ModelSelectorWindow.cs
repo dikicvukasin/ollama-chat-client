@@ -3,7 +3,7 @@
 namespace OllamaChatClient.Console.UI;
 using Console = System.Console;
 
-public class ModelSelector
+public class ModelSelectorWindow
 {
     // private readonly IOllamaService _ollama;
     // private readonly ChatInterface _chatInterface;
